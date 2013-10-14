@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @situation_geosmap.name %>
+</p>
+
+<p>
+  <b>Center Lat:</b>
+  <%= @situation_geosmap.centerlat %>
+</p>
+
+<p>
+  <b>Center Lng:</b>
+  <%= @situation_geosmap.centerlng %>
+</p>
+
+<p>
+  <b>Zoom:</b>
+  <%= @situation_geosmap.zoom %>
+</p>
+
+<p>
+  <b>Map type:</b>
+  <%= @situation_geosmap.maptype %>
+</p>
+
+
+<%= link_to 'Edit', edit_situation_geosmap_path(@situation_geosmap) %> |
+<%= link_to 'Back', situation_geosmaps_path %>

@@ -12,4 +12,8 @@ class StaticPagesController < ApplicationController
   def about
   end
   
+  def situation
+  end
+  
+  
 end

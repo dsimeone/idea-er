@@ -1,5 +1,13 @@
 IdeaEr::Application.routes.draw do
 
+  resources :incident_statuses
+  resources :incident_types
+  resources :incidents
+  
+  match '/situation_geosmaps/:id/display' => "situation_geosmaps#display"
+  match '/situation_geosmaps/:id/currentmap' => "situation_geosmaps#currentmap"
+  resources :situation_geosmaps
+
   get "users/new"
 
   resources :users
@@ -15,6 +23,8 @@ IdeaEr::Application.routes.draw do
   match '/help', to: 'static_pages#help'
   match '/about', to: 'static_pages#about'
   match '/contact', to: 'static_pages#contact'
+  match '/situation', to: 'static_pages#situation'
+  
   
   
 

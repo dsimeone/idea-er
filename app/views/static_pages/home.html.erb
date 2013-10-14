@@ -8,25 +8,24 @@
  			<%= render 'shared/micropost_form'%>
   		</section>
   		<section>
-  		     <%= link_to "Emergency Response Map", '#', class: "btn btn-large btn-primary"%>
+  		     <%= link_to "Emergency Response Situation Map", situation_geosmaps_path, class: "btn btn-large btn-warning"%>
         </section>
   	</aside>
     <div class="span8">
-    	<h3>Micropost Feed</h3>
+    	<h3>Operations Feed</h3>
     	<%= render 'shared/feed' %>
     </div>
   </div>
 <% else %>
 
   <div class="center hero-unit">
-     <h1>Welcome</h1>
-     <h2>
-	  This is the home page for 
-	  <a href="http://idea-er.com/">IDea - Emergency Response</a>
+     <h2>Welcome</h2>
+     <h2> 
+	  <a href="http://idea-er.com/">IDea Emergency Response C2 System</a>
 		
      </h2>
-     <p>Site in construction........</p>
-     <%= link_to "Show Emergency Response Map", '#', class: "btn btn-large btn-primary"%>
+
+     <%= link_to "Show Emergency Response Situation Map", situation_geosmaps_path, class: "btn btn-large btn-warning"%>
    </div>
 
     <%= link_to image_tag("rails.png", alt: "Rails"), 'http://rubyonrails.org/'%>

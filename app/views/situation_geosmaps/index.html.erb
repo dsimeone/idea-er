@@ -1,0 +1,28 @@
+<h1>Listing situation maps</h1>
+
+<table class="table table-bordered">
+  <tr>
+    <th>Name</th>
+    <th>Center Lat</th>
+    <th>Center Lng</th>
+    <th>Zoom</th>
+    <th>Map Type</th>
+  </tr>
+
+<% @situation_geosmaps.each do |situation_geosmap| %>
+  <tr>
+    <td><%= button_to situation_geosmap.name, {:controller=> 'situation_geosmaps', :id=> situation_geosmap.id,:action=> 'display'}, 
+                                                                                                          :class=>"btn btn-warning", :method=> :get%></td>
+    <td><%= situation_geosmap.centerlat %></td>
+    <td><%= situation_geosmap.centerlng %></td>
+    <td><%= situation_geosmap.zoom %></td>
+    <td><%= situation_geosmap.maptype %></td>
+
+    <td><%= button_to 'Change', edit_situation_geosmap_path(situation_geosmap), :class=>"btn btn-primary", :method=>:get %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Situation geosmap', new_situation_geosmap_path %>
