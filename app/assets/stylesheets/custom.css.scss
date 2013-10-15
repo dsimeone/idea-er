@@ -234,8 +234,16 @@ aside {
   background-color: black;
   color: white; 
   font-family: sans-serif;
-  font-size: 1em;
+  font-size: 0.9em;
   right: 2px;
   display: block;
 }
 
+#sidebar label {
+  font-size: 1.1em;
+    color: gray;
+}
+
+#sidebar input {
+  font-size: 1.1em;
+}

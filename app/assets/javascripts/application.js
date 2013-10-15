@@ -21,7 +21,9 @@ window.onload = initialize;
 //////////////////////////////////////////////////////////////
 var geosmap;
 var map;
-
+var geoForm = document.createElement("form");
+var displayLat;
+var deisplayLng;
 
 /////////////////////////////////////////////////////////////////////
 function initialize() {
@@ -76,11 +78,23 @@ function loadCurrentMap() {
           break;
           case 'satellite':
                   map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
-          break;        };        
+          break;        }; 
+          google.maps.event.addListener(map,'mousemove',function(event){
+                displayLatLong(event.latLng);});  
+       
     }        
   }); //end of .ajax request
 
 }
-
-//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+// mouse mouvement on the map 
+//////////////////////////////////////////////////////////
+function displayLatLong(location) {
+  //retrieve lat and long of the click point
+  displayLat = location.lat().toFixed(4);
+  displayLong = location.lng().toFixed(4);
+  document.getElementById("geolat").setAttribute("value",displayLat);
+  document.getElementById("geolng").setAttribute("value",displayLong);  
+}
+///////////////////////////////////////////////////////////////
 window.onload = initialize;
