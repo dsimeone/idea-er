@@ -26,57 +26,11 @@ var map;
 /////////////////////////////////////////////////////////////////////
 function initialize() {
 
-// setup drawingManager();//////////////////////////////////
-    drawingManager.setMap(map);
-/////////////////////////////////////////////////////////////
-//    
-       displayGeoPanel();
-       
-       
-} // end initialize
+// loadCurrentMap();
 
-//////////////////////////////////////////////////////////////////////
-function displayGeoPanel() {
-  var address="'indexmarkers'";
-  geoForm.id = "geopanel";
-  geoForm.setAttribute("action","");
-  geoForm.onsubmit = function() {  
-  	                    document.getElementById("sidebar").removeChild(geoForm);
-  	                    return false;};
-  geoForm.innerHTML =  
-    '<fieldset style="width:100%;">' +
-    '<label for="map">Map: </label>' +  geosmap.name +   
-    '<input type="button" id="savemap" value="Save Map" style="width:90%;" onclick="saveMap()"/>' +
-    '<br>' +
-    '<label for="latitude">Lat </label>' +
-    '<input type="text" id="geolat" name="geo[lat]" maxlength="10"' + 
-     'value="'+ centerLatitude.toFixed(4) + '"/>' +
-    '<br>' +
-    '<label for="longitude">Lng </label>' +
-    '<input type="text" id="geolng" name="geo[lng]" maxlength="10" ' + 
-     'value="'+ centerLongitude.toFixed(4) + '"/>' +
-    '<br>' +
-    '<input type="button" id="geo1" value="Find Address from Lat/Long" style="width:90%;" onclick="displayReverseGeocode()"/>' +
-    '<br>' +
-    '<input type="text" id="geocodetxt" name="geo[geocodetxt]" style="width:90%;" ' + 
-    '<br>' +
-    '<input type="button" id="geocode" value="Geocode an Address" style="width:90%;" onclick="displayGeocode()"/>' +
-    '<input type="button" id="myposition" value="My Position" style="width:30%;" onclick="displayMyPosition()"/>' +
-    '<input type="button" id="newtrackbuttonid" value="New Track" style="width:30%;" onclick="newTrackOnOff()"/>' +
-    '<input type="button" id="althookbuttonid" value="Alt Hook" style="width:30%;" onclick="altHookOnOff()"/>' +
-    '<input type="button" id="panoramiobuttonid" value="Panoramio" style="width:30%;" onclick="showPanoramio()"/>' +
-    '<input type="button" id="weatherbuttonid" value="Weather" style="width:30%;" onclick="showWeather()"/>' +
-    '<input type="button" id="markerlistbuttonid" value="Marker List" style="width:30%;" onclick="document.location.href='+address+';"/>' +
-    '<label for="tag">Tag </label>' +
-    '<input type="text" id="tag" name="geo[tag]" style="width:60%;" />' + 
-     '<input type="button" id="filter-button" value="Apply Panoramio filter" style="width:90%;" onclick=""/>' +
-     '<input type="button" id="frombuttonid" value="From" style="width:30%;" onclick="fromOnOff()"/>' +
-    '<input type="button" id="tobuttonid" value="To" style="width:30%;" onclick="toOnOff()"/>' +
-    '<input type="button" id="directionbuttonid" value="Direction" style="width:30%;" onclick="calculateDirection()"/>' +
-    '</fieldset>';
 
-    document.getElementById("sidebar").appendChild(geoForm);
- }
+}
+
 /////////////////////////////////////////////////////////////
 function loadCurrentMap() {
 
