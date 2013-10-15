@@ -218,7 +218,7 @@ aside {
   width: 80%;
   height: 85%;
   overflow: auto;
-  border: 1px solid blue;
+  border: 1px solid gray;
   left: 2px;
   display: block;
 
@@ -230,12 +230,12 @@ aside {
   width: 19%;
   height: 85%;
   overflow: auto;
-  border: 1px solid blue;
-  background-color: white;
-  color: blue; 
+  border: 1px solid gray;
+  background-color: black;
+  color: white; 
   font-family: sans-serif;
-  font-size: 10px;
-  border-bottom: 1px solid blue;
+  font-size: 1em;
   right: 2px;
   display: block;
 }
+
