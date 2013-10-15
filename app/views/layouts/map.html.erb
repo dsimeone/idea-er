@@ -16,9 +16,13 @@
        <div id="map_canvas"></div>
     <%= yield %>
        <div id="sidebar">
-       	<i  class="icon-glass icon-white"></i> icon-glass
-       	
+          <table class="table table-bordered">
+          	   <tr>
+          	   	   <td><i  class="icon-globe icon-white"></i> <icon-glass> <%=  @situation_geosmap.name%></td>
+          	   </tr>
+          	</table>	
        </div>
     
 </body>
 </html>
+
