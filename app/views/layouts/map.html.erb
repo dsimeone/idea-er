@@ -4,8 +4,9 @@
   <title><%=full_title(yield(:title))%></title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag "marker_mod" %>
 
-    <script src="http://maps.googleapis.com/maps/api/js?sensor=true">  </script>
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=drawing">  </script>
 
   <%= csrf_meta_tags %>
   <%= render 'layouts/shim' %>
@@ -29,8 +30,7 @@
             				      <td><input type="text" id="geolat"    maxlength="8" </td>
              				      <td><input type="text" id="geolng"  maxlength="8" </td>            			
                         </tr>
-            		</table>
-             		    
+                    </table>
  		        </div>
             </div>
             	

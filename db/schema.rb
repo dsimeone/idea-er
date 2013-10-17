@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131013160932) do
+ActiveRecord::Schema.define(:version => 20131017190357) do
 
   create_table "geosmaps", :force => true do |t|
     t.float    "centerlat"
@@ -25,6 +25,21 @@ ActiveRecord::Schema.define(:version => 20131013160932) do
     t.integer  "user_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+  end
+
+  create_table "geosmarkers", :force => true do |t|
+    t.string   "name"
+    t.float    "lat"
+    t.float    "lng"
+    t.string   "icon"
+    t.string   "address"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "geosmarkers_situation_geosmaps", :id => false, :force => true do |t|
+    t.integer "geosmarker_id"
+    t.integer "situation_geosmap_id"
   end
 
   create_table "incident_statuses", :force => true do |t|

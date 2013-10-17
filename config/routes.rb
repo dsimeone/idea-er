@@ -6,8 +6,17 @@ IdeaEr::Application.routes.draw do
   
   match '/situation_geosmaps/:id/display' => "situation_geosmaps#display"
   match '/situation_geosmaps/:id/currentmap' => "situation_geosmaps#currentmap"
+  match '/situation_geosmaps/:id/createmarker' => "geosmarkers#create"
+  match '/situation_geosmaps/:id/indexmarkers' => "geosmarkers#index", :as => :geosmarkers_situation_geosmap
+  match '/situation_geosmaps/:id/listmarkers' => "geosmarkers#list"
+  match '/situation_geosmaps/:id/createmarker' => "geosmarkers#create"
+  match '/situation_geosmaps/:id/destroymarker/:id' => "geosmarkers#destroy"
+  match '/situation_geosmaps/:id/updatemarker/:id' => "geosmarkers#update"
+  match '/situation_geosmaps/:id/updatemapmarker/:id' => "geosmarkers#updatemap"  
+  
+  
   resources :situation_geosmaps
-
+  resources :geosmarkers
   get "users/new"
 
   resources :users
