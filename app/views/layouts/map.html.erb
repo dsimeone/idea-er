@@ -13,27 +13,17 @@
 <body>
   <%= render 'layouts/header' %> 
 
-       <div id="map_canvas"></div>
+   <div id="map_canvas">
     <%= yield %>
-       <div id="sidebar">
+    </div>
+   <div id="sidebar">
           <table class="table table-bordered">
           	   <tr>
           	   	   <td><i  class="icon-globe icon-white"></i> <icon-glass> <%=  @situation_geosmap.name%></td>
           	   </tr>
           	</table>
-            <div class="container-fluid" id="generalPanel">
-            	<div class="row-fluid">
-            		<table>
-            			<tr>
-                         		  <td><label id="idlatlng">Lat/Long: </label></td> 
-            				      <td><input type="text" id="geolat"    maxlength="8" </td>
-             				      <td><input type="text" id="geolng"  maxlength="8" </td>            			
-                        </tr>
-                    </table>
- 		        </div>
-            </div>
-            	
-       </div>
+      <script>displayGeoPanel()</script>      	
+   </div>
     
 </body>
 </html>

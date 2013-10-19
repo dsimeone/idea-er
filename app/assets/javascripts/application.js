@@ -26,6 +26,7 @@ var initlatlng;
 var geosmap;
 var map;
 var drawingManager;
+var geoForm = document.createElement("form");
 
 var altHookFlag = false;
 var hookedOverlay = null;
@@ -112,6 +113,7 @@ function loadCurrentMap() {
            initDrawingManager(); 
            initHook();
            listMarkers();
+//           displayGeoPanel();
        
     }        
   }); //end of .ajax request
@@ -127,8 +129,8 @@ function displayLatLong(location) {
   //retrieve lat and long of the click point
   displayLat = location.lat().toFixed(4);
   displayLong = location.lng().toFixed(4);
-  document.getElementById("geolat").setAttribute("value",displayLat);
-  document.getElementById("geolng").setAttribute("value",displayLong);  
+  document.getElementById("geolatid").setAttribute("value",displayLat);
+  document.getElementById("geolngid").setAttribute("value",displayLong);  
 }
 ///////////////////////////////////
 // initialize drawing manager
@@ -284,6 +286,42 @@ function initHook() {
                         map: map,
                         icon: hookImage});
 }
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//
+//  GEOPANEL MOD
+//
+///////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+function displayGeoPanel() {
+	  //Hook HTML DOM form element
+
+	  var address="'indexmarkers'";
+  geoForm.id = "geopanel";
+  geoForm.setAttribute("action","");
+  geoForm.onsubmit = function() {  
+  	                    document.getElementById("sidebar").removeChild(geoForm);
+  	                    return false;};
+  geoForm.innerHTML =  
+    '<fieldset style="width:100%;">' +
+    '<label for="geolatid">Lat/Lng  </label>' +'<br>'+  
+    '<input type="text" id="geolatid" name="geo[lat]" maxlength="10"' + 
+     'value="'+ centerLatitude.toFixed(4) + '"/>' +
+    '<input type="text" id="geolngid" name="geo[lng]" maxlength="10" ' + 
+     'value="'+ centerLongitude.toFixed(4) + '"/>' +
+    '<br>' +
+    '<input type="button" id="newincidentbuttonid" value="Insert New Incident" class="button red bigrounded;" onclick="newTrackOnOff()"/>' +
+    '<br><br>' +
+    '<input type="button" id="althookbuttonid" value="Alt Hook" class="button black medium" onclick="altHookOnOff()"/>' +
+    '</fieldset>';
+    document.getElementById("sidebar").appendChild(geoForm);
+ }
+
+
+
+
+
 /////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 //           MARKER MOD
@@ -343,25 +381,26 @@ function displayMarkerNormalHook(marker, address,geosmarker)
   	                    return false;};
   hookMarkerForm.innerHTML =  
     '<fieldset style="width:100%;">' +
+    ' <img src="/assets/map-pin-red.png"  height="34" width="28"> ' +
+    '<label for="latitude">Lat/Lng: </label>' + marker.getPosition().lat().toFixed(4) +
+    '<input type="hidden" id="markerlatid" name="geosmarker[lat]" value="' +
+     marker.getPosition().lat().toFixed(4) + '"/>' +  ' /  ' +
+      marker.getPosition().lng().toFixed(4) +
+    '<input type="hidden" id="markerlngid" name="geosmarker[lng]" value="' +
+     marker.getPosition().lng().toFixed(4) + '"/>' +
+    '<br>' +
     '<label for="namemarkertxt">Name   </label>'  +
     '<input type="text" id="namemarkertxt" name="geosmarker[name]" value="' + geosmarkername + '"/>' +
     '<br>' +
 
-    '<label for="latitude">Lat: </label>' + marker.getPosition().lat().toFixed(4) +
-    '<input type="hidden" id="markerlatid" name="geosmarker[lat]" value="' +
-     marker.getPosition().lat().toFixed(4) + '"/>' +
-    '<label for="longitude">Lng: </label>' + marker.getPosition().lng().toFixed(4) +
-    '<input type="hidden" id="markerlngid" name="geosmarker[lng]" value="' +
-     marker.getPosition().lng().toFixed(4) + '"/>' +
-    '<br>' +
-    
+
     '<label for="addresstxt">Address </label>' +   
     '<input type="text" id="addresstxt" name="geosmarker[address]" ' +
     'value="'+  geosmarkeraddress + '"/>'+   
-    '<input type="submit" class="button black" id="cancelMarker" value="Delete Marker" />' +
-    '<input type="button" class="button black" id="centerMarker" value="Center Marker" onclick="centerMapOnMarkerHook();" />' +
     '<input type="button" class="button black" id="addressMarker" value="Find Address" onclick="displayReverseGeocodeOnHook();" />' +
+    '<input type="button" class="button black" id="centerMarker" value="Center Marker" onclick="centerMapOnMarkerHook();" />' +
     '<input type="button" class="button black" id="saveMarker" value="Update Marker" onclick="saveMarkerOnDB();" />' +
+    '<input type="submit" class="button red" id="cancelMarker" value="Delete Marker" />' +
    '</fieldset>';
 
     if (trackHookVisibility == true){
