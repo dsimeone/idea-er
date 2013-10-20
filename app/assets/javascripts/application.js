@@ -27,6 +27,7 @@ var geosmap;
 var map;
 var drawingManager;
 var geoForm = document.createElement("form");
+var geocoder;
 
 var altHookFlag = false;
 var hookedOverlay = null;
@@ -111,6 +112,7 @@ function loadCurrentMap() {
           google.maps.event.addListener(map,'mousemove',function(event){
                 displayLatLong(event.latLng);}); 
            initDrawingManager(); 
+           geocoder = new google.maps.Geocoder();
            initHook();
            listMarkers();
 //           displayGeoPanel();
@@ -278,7 +280,7 @@ drawingManager = new google.maps.drawing.DrawingManager({
 ////////////////////////////
 function initHook() {
     initlatlng = new google.maps.LatLng(centerLatitude,centerLongitude);
-    hookImage = new google.maps.MarkerImage("/assets/hook.png",new google.maps.Size(90,90),new google.maps.Point(0,0),new google.maps.Point(45,45));
+    hookImage = new google.maps.MarkerImage("/assets/hookred.png",new google.maps.Size(90,90),new google.maps.Point(0,0),new google.maps.Point(45,45));
     hookAltImage = new google.maps.MarkerImage("/assets/hookalt.png",new google.maps.Size(90,90),new google.maps.Point(0,0),new google.maps.Point(45,45));
 
 	hookMarker = new google.maps.Marker({
@@ -390,7 +392,7 @@ function displayMarkerNormalHook(marker, address,geosmarker)
      marker.getPosition().lng().toFixed(4) + '"/>' +
     '<br>' +
     '<label for="namemarkertxt">Name   </label>'  +
-    '<input type="text" id="namemarkertxt" name="geosmarker[name]" value="' + geosmarkername + '"/>' +
+    '<input type="text" id="namemarkertxt"  name="geosmarker[name]" value="' + geosmarkername + '"/>' +
     '<br>' +
 
 
@@ -620,7 +622,25 @@ function createGeosmarker(geosmarkerpar) {
     return marker;  
 }
 //////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+function displayReverseGeocodeOnHook() {
 
+var latlng = hookedMarker.getPosition();
+geocoder.geocode({'latLng': latlng}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+           if (results[0]) {
+           	  hookedGeosmarker.address = results[0].formatted_address;
+           	  hookedGeosmarker.name = document.getElementById("hookmarkerpanel").namemarkertxt.value;
+              displayMarkerHook(hookedMarker, results[0].formatted_address,hookedGeosmarker)
+           } else {
+               alert("No results found");
+             }
+         } else {
+             alert("Geocoder failed due to: " + status);
+           }
+        });
+} 
+///////////////////////////////////////////////////////////
 
 ////////////////////////////
 window.onload = initialize;
