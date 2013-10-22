@@ -28,7 +28,8 @@ var map;
 var drawingManager;
 var geoForm = document.createElement("form");
 var geocoder;
-
+var newIncidentFlag = false;
+var infoCreateWindow;
 var altHookFlag = false;
 var hookedOverlay = null;
 var hookedAltOverlay = null;
@@ -38,6 +39,7 @@ var hookMarker;
 var hookImage;
 var hookAltImage;
 var hookMarkerForm = document.createElement("form");
+var incidentInfoBoxCreate;
 
 var trackHookVisibility = false;
 var markerHookVisibility = false;
@@ -113,8 +115,13 @@ function loadCurrentMap() {
                 displayLatLong(event.latLng);}); 
            initDrawingManager(); 
            geocoder = new google.maps.Geocoder();
+            infoCreateWindow = new google.maps.InfoWindow({
+                                                                  disableAutoPan: false
+                                                           });
            initHook();
            listMarkers();
+           incidentInfoBoxCreate = new InfoBox();
+
 //           displayGeoPanel();
        
     }        
@@ -313,16 +320,125 @@ function displayGeoPanel() {
     '<input type="text" id="geolngid" name="geo[lng]" maxlength="10" ' + 
      'value="'+ centerLongitude.toFixed(4) + '"/>' +
     '<br>' +
-    '<input type="button" id="newincidentbuttonid" value="Insert New Incident" class="button red bigrounded;" onclick="newTrackOnOff()"/>' +
+    '<input type="button" id="newincidentbuttonid" value="Insert New Incident" class="button red bigrounded;" onclick="newIncidentOnOff()"/>' +
     '<br><br>' +
     '<input type="button" id="althookbuttonid" value="Alt Hook" class="button black medium" onclick="altHookOnOff()"/>' +
     '</fieldset>';
     document.getElementById("sidebar").appendChild(geoForm);
  }
+//////////////////////////////////////////////////////////////////////
+//
+//       INCIDENT MOD
+//
+//
+//////////////////////////////////////////////////////////////////////
+function newIncidentOnOff(){
+	if (newIncidentFlag == false) {
+		newIncidentFlag = true;
+		$("#newincidentbuttonid").prop('value','ClickOnMap');
+		$("#newincidentbuttonid").prop("class","button white");
+	    google.maps.event.addListener(map,'click',function(event){
+        createIncidentInfoWindow(event.latLng);});  
+		drawingManager.setOptions({
+              drawingMode: null
+        });
+	}
+	else {
+	    newIncidentFlag = false;
+	    google.maps.event.clearListeners(map,'click');
+//        document.getElementById("geo1").value = "Places";
+		$("#newincidentbuttonid").prop("value","Insert New Incident");
+		$("#newincidentbuttonid").prop("class","button red");
+		drawingManager.setOptions({
+           drawingControlOptions: {
+           	        drawingControl: true,
+           	        map: map,
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: [google.maps.drawing.OverlayType.MARKER,
+                                           google.maps.drawing.OverlayType.CIRCLE,
+                                           google.maps.drawing.OverlayType.RECTANGLE,
+                                           google.maps.drawing.OverlayType.POLYLINE,
+                                           google.maps.drawing.OverlayType.POLYGON] 
+           }
+        });
+	};
 
+}
+//////////////////////////////////////////////////////////
+// on click on the map in empty position
+//////////////////////////////////////////////////////////
+function createIncidentInfoWindow(location) {
+  //retrieve lat and long of the click point
+  var lat = location.lat();
+  var lng = location.lng();
+  //create an HTML DOM form element
+  var inputForm = document.createElement("form");
+  inputForm.id = "createFormId";
+  inputForm.setAttribute("action","");
+  inputForm.onsubmit = function() {createIncident(location); return false;};
+  var innertemp =  
+    '<fieldset >' +
+    '<label for="ititle">Title </label>' +
+    '<input type="text" id="ititle" name="incident[title]" style="width:100%;"/>'+
+    '<br>' +
+    '<label for="latitude">Lat/Lng </label>' + lat.toFixed(4) + 
+    '<input type="hidden" id="latitude" name="incident[lat]" maxlength="10" value="' +
+      lat + '"/>' +" / " +
+       lng.toFixed(4) +
+    '<input type="hidden" id="longitude" name="incident[long]" maxlength="10" value="' +
+      lng + '"/>' +
+    '<br>' +
+    '<label>Description </label>' +
+    '<textarea class="idescription" rows="4"  cols= "25" name="incident[description]" > </textarea>'+
+    '<br>' +
+    '<label for="itype">Type </label>' +
+    '<select class="iselect" name="incident[type]">' +
+    '<option value="fire">Fire</option> ' +
+    '<option value="flooding">Flooding</option> ' +
+    '<option value="roadcrash">Road Crash</option>' +
+    '</select>' +
+    '<br>' +
+    '<label for="istatus">Status  </label>'+
+    '<select class="iselect" name="incident[status]">' +
+    '<option value="noted">Noted</option> ' +
+    '<option value="mobilization">Mobilization</option> ' +
+    '<option value="resolving">Resolving</option>' +
+    '<option value="postresolution">Post Resolution</option>' +
+    '<option value="closed">Closed</option>' +
+    '</select>' +
+    '<br>' +
+    '<input type="submit" class= "button red" value="Create" />' +
+    '</fieldset>';
+     inputForm.innerHTML = innertemp;
 
+        inputForm.style.cssText = "border: 1px solid black; margin-top: 8px; background: black; padding: 5px; color: white;";
+ 
+      var myOptions = {
+                 content: inputForm
+                ,disableAutoPan: false
+                ,maxWidth: 0
+                ,pixelOffset: new google.maps.Size(-140,0)
+                ,position: new google.maps.LatLng(lat, lng)
+                ,zIndex: null
+                ,boxStyle: { 
+                  background: "url('/assets/tipbox.gif') no-repeat"
+                  ,opacity: 0.75
+                  ,width: "280px"
+                 }
+                ,closeBoxMargin: "10px 2px 2px 2px"
+                ,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
+                ,infoBoxClearance: new google.maps.Size(1, 1)
+                ,isHidden: false
+                ,pane: "floatPane"
+                ,enableEventPropagation: false
+        };
 
+        incidentInfoBoxCreate.setOptions(myOptions);
+        incidentInfoBoxCreate.open(map);
+        newIncidentOnOff();
+  return;
 
+}
 
 /////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
