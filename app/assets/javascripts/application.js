@@ -221,7 +221,7 @@ drawingManager = new google.maps.drawing.DrawingManager({
 	          data: formValues,
               dataType: "json",
               success: function(data, status){ 
-              	geosmarker = data.geosmarker;
+              	geosmarker = data;
               	displayMarkerHook(event.overlay,"",geosmarker); 
   	          	setEventsOnMarker(event.overlay,geosmarker);  	
                 	    } // end on success
@@ -744,10 +744,11 @@ function displayReverseGeocodeOnHook() {
 var latlng = hookedMarker.getPosition();
 geocoder.geocode({'latLng': latlng}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
+        	alert(hookedGeosmarker);
            if (results[0]) {
            	  hookedGeosmarker.address = results[0].formatted_address;
            	  hookedGeosmarker.name = document.getElementById("hookmarkerpanel").namemarkertxt.value;
-              displayMarkerHook(hookedMarker, results[0].formatted_address,hookedGeosmarker)
+              displayMarkerHook(hookedMarker, results[0].formatted_address,hookedGeosmarker);
            } else {
                alert("No results found");
              }
