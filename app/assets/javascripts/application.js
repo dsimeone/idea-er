@@ -56,6 +56,7 @@ var polylineAltHookVisibility = false;
 var polygonAltHookVisibility = false;
 
 var nGeosmarkers;
+var nIncidents;
 var geosmarkerArray=new Array();
 /////////////////////////////////////////////////////////////////////
 function initialize() {
@@ -121,6 +122,7 @@ function loadCurrentMap() {
                                                            });
            initHook();
            listMarkers();
+           listIncidents();
            incidentInfoBoxCreate = new InfoBox();
 
 //           displayGeoPanel();
@@ -386,14 +388,14 @@ function createIncidentInfoWindow(location) {
     '<input type="hidden" id="latitude" name="incident[lat]" maxlength="10" value="' +
       lat + '"/>' +" / " +
        lng.toFixed(4) +
-    '<input type="hidden" id="longitude" name="incident[long]" maxlength="10" value="' +
+    '<input type="hidden" id="longitude" name="incident[lng]" maxlength="10" value="' +
       lng + '"/>' +
     '<br>' +
     '<label>Description </label>' +
     '<textarea class="idescription" rows="4"  cols= "25" name="incident[description]" > </textarea>'+
     '<br>' +
     '<label for="itype">Type </label>' +
-    '<select class="iselect" name="incident[type]">' +
+    '<select class="iselect" name="incident[incidentType]">' +
     '<option value="fire">Fire</option> ' +
     '<option value="flooding">Flooding</option> ' +
     '<option value="roadcrash">Road Crash</option>' +
@@ -401,7 +403,7 @@ function createIncidentInfoWindow(location) {
     '</select>' +
     '<br>' +
     '<label for="istatus">Status  </label>'+
-    '<select class="iselect" name="incident[status]">' +
+    '<select class="iselect" name="incident[incidentStatus]">' +
     '<option value="noted">Noted</option> ' +
     '<option value="mobilization">Mobilization</option> ' +
     '<option value="resolving">Resolving</option>' +
@@ -444,19 +446,19 @@ function createIncidentInfoWindow(location) {
 /////////////////////////////////////////////////////////////
 // on submit Create button click
 /////////////////////////////////////////////////////////////
-function createIncident (location) {
-    lat = location.lat();
-    lng = location.lng();
+function createIncident(location) {
+//    var lat = location.lat();
+//    var lng = location.lng();
     var formValues=$("form#createIncidentFormId").serialize();
     $.ajax({
     	async: false,
     	type: "POST",
-	    url: "create",
+	    url: "/incidents",
 	    data: formValues,
         dataType: "json",
         success: function(data, status){
           incidentInfoBoxCreate.close();
-		  var incident = data.incident;
+		  var incident = data;
           var marker;
           marker=createIncidentMarker(incident);
 	    } // end on success
@@ -469,7 +471,9 @@ function createIncident (location) {
 ///////////////////////////////////////////////////////////////////////////
 
 function createIncidentMarker(incident) {
+
     buildImage(incident);// set image with the correct symbol
+
     var lat=incident.lat;
     var lng=incident.lng;
     var latlng = new google.maps.LatLng(lat,lng);
@@ -488,11 +492,10 @@ function createIncidentMarker(incident) {
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 function buildImage(incident) {
-
-    if (incident.type == 'fire') {image = new google.maps.MarkerImage("/images/fire.png",null,null, new google.maps.Point(17,17));}
-    if (incident.type == 'flooding') { image = new google.maps.MarkerImage("/images/flooding.png",null,null, new google.maps.Point(17,17));}
-    if (incident.type == 'roadcrash') { image = new google.maps.MarkerImage("/images/roadcrash.png",null,null, new google.maps.Point(17,17))}
-    if (incident.type == 'other') { image =  new google.maps.MarkerImage("/images/other.png",null,null, new google.maps.Point(17,17));}
+    if (incident.incidentType == 'fire') {image = new google.maps.MarkerImage("/assets/fire.png",null,null, new google.maps.Point(17,17));}
+    if (incident.incidentType == 'flooding') { image = new google.maps.MarkerImage("/assets/flooding.png",null,null, new google.maps.Point(17,17));}
+    if (incident.incidentType == 'roadcrash') { image = new google.maps.MarkerImage("/assets/roadcrash.png",null,null, new google.maps.Point(17,17))}
+    if (incident.incidentType == 'other') { image =  new google.maps.MarkerImage("/assets/other.png",null,null, new google.maps.Point(17,17));}
 
 }
 ///////////////////////////////////////////////////////////////////////
@@ -510,7 +513,29 @@ function setEventsOnIncident(marker,latlng,incident) {
     updateInfoPanel(marker,event.latLng,incident);
   });
 }
+/////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+function listIncidents() {
+  $.ajax({
+  	async: false,
+  	type: "GET",
+	url: "/incidents",
+	dataType: "json",
+    success: function(data, status){
+        var incidents;
+        var incident;
+		var marker;
+		incidents = data;
+		nIncidents = incidents.length;
+        for (var i = 0 ; i < incidents.length ; i++) {
+          incident = incidents[i];  
+          marker=createIncidentMarker(incident);
 
+        }; // end of for loop
+	} // end of function
+  }); //end of .ajax request
+
+}
 /////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 //           MARKER MOD

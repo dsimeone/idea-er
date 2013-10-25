@@ -15,6 +15,17 @@ class IncidentsController < ApplicationController
     render :text=>incident.to_json
   end
 
+  def index
+    puts("index incidents--------------------------------------------") 
+    @incidents = Incident.all
+    respond_to do |format|
+        format.html # index.html.erb
+        format.json { render json: @incidents }
+    end
+
+
+#    render :text=>(Track.find :all).to_json
+  end
 
 
 
@@ -24,14 +35,14 @@ class IncidentsController < ApplicationController
 
   # GET /incidents
   # GET /incidents.json
-  def index
-    @incidents = Incident.all
+#  def index
+ #   @incidents = Incident.all
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @incidents }
-    end
-  end
+#    respond_to do |format|
+#      format.html # index.html.erb
+#      format.json { render json: @incidents }
+#    end
+#  end
 
   # GET /incidents/1
   # GET /incidents/1.json
