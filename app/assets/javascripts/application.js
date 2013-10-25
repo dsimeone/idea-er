@@ -40,6 +40,7 @@ var hookImage;
 var hookAltImage;
 var hookMarkerForm = document.createElement("form");
 var incidentInfoBoxCreate;
+var image='';
 
 var trackHookVisibility = false;
 var markerHookVisibility = false;
@@ -373,7 +374,7 @@ function createIncidentInfoWindow(location) {
   var lng = location.lng();
   //create an HTML DOM form element
   var inputForm = document.createElement("form");
-  inputForm.id = "createFormId";
+  inputForm.id = "createIncidentFormId";
   inputForm.setAttribute("action","");
   inputForm.onsubmit = function() {createIncident(location); return false;};
   var innertemp =  
@@ -396,6 +397,7 @@ function createIncidentInfoWindow(location) {
     '<option value="fire">Fire</option> ' +
     '<option value="flooding">Flooding</option> ' +
     '<option value="roadcrash">Road Crash</option>' +
+    '<option value="other">Other</option>' +
     '</select>' +
     '<br>' +
     '<label for="istatus">Status  </label>'+
@@ -438,6 +440,75 @@ function createIncidentInfoWindow(location) {
         newIncidentOnOff();
   return;
 
+}
+/////////////////////////////////////////////////////////////
+// on submit Create button click
+/////////////////////////////////////////////////////////////
+function createIncident (location) {
+    lat = location.lat();
+    lng = location.lng();
+    var formValues=$("form#createIncidentFormId").serialize();
+    $.ajax({
+    	async: false,
+    	type: "POST",
+	    url: "create",
+	    data: formValues,
+        dataType: "json",
+        success: function(data, status){
+          incidentInfoBoxCreate.close();
+		  var incident = data.incident;
+          var marker;
+          marker=createIncidentMarker(incident);
+	    } // end on success
+	}); // end of the new Ajax.Request() call
+
+}
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+//after incident creation to create a incident marker
+///////////////////////////////////////////////////////////////////////////
+
+function createIncidentMarker(incident) {
+    buildImage(incident);// set image with the correct symbol
+    var lat=incident.lat;
+    var lng=incident.lng;
+    var latlng = new google.maps.LatLng(lat,lng);
+    var marker = new google.maps.Marker({
+                        position: latlng,
+                        map: map,
+                        title:incident.title,
+                        draggable: true,
+                        icon: image});
+    setEventsOnIncident(marker,latlng,incident);
+
+    image = '';
+
+    return marker;  
+}
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+function buildImage(incident) {
+
+    if (incident.type == 'fire') {image = new google.maps.MarkerImage("/images/fire.png",null,null, new google.maps.Point(17,17));}
+    if (incident.type == 'flooding') { image = new google.maps.MarkerImage("/images/flooding.png",null,null, new google.maps.Point(17,17));}
+    if (incident.type == 'roadcrash') { image = new google.maps.MarkerImage("/images/roadcrash.png",null,null, new google.maps.Point(17,17))}
+    if (incident.type == 'other') { image =  new google.maps.MarkerImage("/images/other.png",null,null, new google.maps.Point(17,17));}
+
+}
+///////////////////////////////////////////////////////////////////////
+function setEventsOnIncident(marker,latlng,incident) {
+
+  google.maps.event.addListener(marker,'click',function(){
+   displayIncidentHook(marker,incident,latlng);
+  });
+
+ google.maps.event.addListener(marker,'dragstart',function(){
+  	hookIncident.setMap(null);
+
+  });
+  google.maps.event.addListener(marker,'dragend',function(event){
+    updateInfoPanel(marker,event.latLng,incident);
+  });
 }
 
 /////////////////////////////////////////////////////
@@ -744,11 +815,10 @@ function displayReverseGeocodeOnHook() {
 var latlng = hookedMarker.getPosition();
 geocoder.geocode({'latLng': latlng}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
-        	alert(hookedGeosmarker);
            if (results[0]) {
            	  hookedGeosmarker.address = results[0].formatted_address;
            	  hookedGeosmarker.name = document.getElementById("hookmarkerpanel").namemarkertxt.value;
-              displayMarkerHook(hookedMarker, results[0].formatted_address,hookedGeosmarker);
+              displayMarkerHook(hookedMarker, results[0].formatted,address,hookedGeosmarker);
            } else {
                alert("No results found");
              }

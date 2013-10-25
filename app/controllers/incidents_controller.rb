@@ -1,4 +1,27 @@
 class IncidentsController < ApplicationController
+  layout 'map' # will use the layout app/views/layouts/map.html.erb
+
+  def create
+    puts("create incident--------------------------------------------") 
+    puts(params[:incident])
+    incident = Incident.new(params[:incident])
+          if incident.save
+        puts('ssssssuuuuuuuccccceeeeeesssss')
+        res={:success=>true,:content=>incident}
+      else
+        puts("save failed.............")
+        res = {:success=>false,:content=>"incident save not possible"}
+      end
+    render :text=>incident.to_json
+  end
+
+
+
+
+
+
+
+
   # GET /incidents
   # GET /incidents.json
   def index
