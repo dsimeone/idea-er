@@ -22,8 +22,6 @@ class IncidentsController < ApplicationController
         format.html # index.html.erb
         format.json { render json: @incidents }
     end
-
-
 #    render :text=>(Track.find :all).to_json
   end
 
@@ -40,79 +38,20 @@ class IncidentsController < ApplicationController
       render :text=>res.to_json
   end
 
-
-
-
-
-
-  # GET /incidents
-  # GET /incidents.json
-#  def index
- #   @incidents = Incident.all
-
-#    respond_to do |format|
-#      format.html # index.html.erb
-#      format.json { render json: @incidents }
-#    end
-#  end
-
-  # GET /incidents/1
-  # GET /incidents/1.json
-  def show
-    @incident = Incident.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @incident }
-    end
-  end
-
-  # GET /incidents/new
-  # GET /incidents/new.json
-  def new
-    @incident = Incident.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @incident }
-    end
-  end
-
-  # GET /incidents/1/edit
-  def edit
-    @incident = Incident.find(params[:id])
-  end
-
-  # POST /incidents
-  # POST /incidents.json
-  def create
-    @incident = Incident.new(params[:incident])
-
-    respond_to do |format|
-      if @incident.save
-        format.html { redirect_to @incident, notice: 'Incident was successfully created.' }
-        format.json { render json: @incident, status: :created, location: @incident }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @incident.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /incidents/1
-  # PUT /incidents/1.json
   def update
     @incident = Incident.find(params[:id])
-
-    respond_to do |format|
-      if @incident.update_attributes(params[:incident])
-        format.html { redirect_to @incident, notice: 'Incident was successfully updated.' }
-        format.json { head :no_content }
+      puts("update marker--------------------------------------------") 
+      @incident.update_attributes(params[:incident])
+      if @incident.save 
+        res={:success=>true,:content=>@incident}
       else
-        format.html { render action: "edit" }
-        format.json { render json: @incident.errors, status: :unprocessable_entity }
+        res = {:success=>false,:content=>"incident update not possible"}
       end
-    end
-  end
+      render :text=>res.to_json
+ end
 
+
+
+
+ 
 end

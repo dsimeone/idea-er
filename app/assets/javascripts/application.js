@@ -580,13 +580,16 @@ function displayIncidentNormalHook(marker, address,incident)
    hookedIncident = incident;
    var incidentrname;
    var incidentaddress;
+   var incidentdescription;
    if (incident == null) {
    	incidentname="";
    	incidentaddress="";
+   	incidentdescription="";
    }
    else {
    	incidenttitle=incident.title;
    	incidentaddress=incident.address;
+   	incidentdescription=incident.description;
 
    }
    hookMarker.setPosition(marker.getPosition());
@@ -615,8 +618,12 @@ function displayIncidentNormalHook(marker, address,incident)
     '<input type="text" id="titleincidenttxt"  name="incident[title]" value="' + incidenttitle + '"/>' +
     '<br>' +
     '<label >Address </label>' +   
-    '<input type="text"  name="incident[address]" ' +
+    '<input type="text"  id="incidentaddressid"  name="incident[address]" ' +
     'value="'+  incidentaddress + '"/>'+   
+    '<br>' +
+    '<label >Description </label>' +   
+    '<textarea  name="incident[description]" rows="3"> ' +
+    incidentdescription  + '</textarea>'+   
     '<input type="button" class="button black"  value="Find Address" onclick="displayReverseGeocodeOnIncidentHook();" />' +
     '<input type="button" class="button black"  value="     Center     " onclick="centerMapOnIncidentHook();" />' +
     '<input type="button" class="button black" value="     Update     " onclick="saveIncidentOnDB();" />' +
@@ -657,12 +664,50 @@ function deleteIncident(incident,marker) {
     	type: "DELETE",
     	url: "/incidents/"+incident.id,
     	success: function(data,status){
-
     	}
-    })
+    });
 }
+//////////////////////////////////////////////////////////////////////
+function displayReverseGeocodeOnIncidentHook() {
 
-
+var latlng = hookedMarker.getPosition();
+geocoder.geocode({'latLng': latlng}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+           if (results[0]) {
+           	  hookedIncident.address = results[0].formatted_address;
+          	  hookedIncident.title = document.getElementById("hookincidentpanel").titleincidenttxt.value;
+              displayIncidentHook(hookedMarker, results[0].formatted_address , hookedIncident);
+           } else {
+               alert("No results found");
+             }
+         } else {
+             alert("Geocoder failed due to: " + status);
+           }
+        });
+} 
+//////////////////////////////////////////////////////////////////
+function centerMapOnIncidentHook() {
+	map.setCenter(hookedMarker.getPosition());
+}
+///////////////////////////////////////////////////////////////////////////////
+function saveIncidentOnDB(){
+    var formValues=$("form#hookincidentpanel").serialize();
+    var lat=hookedIncident.lat;
+    var lng=hookedIncident.lng;
+    var latlng = new google.maps.LatLng(lat,lng);
+    $.ajax({
+    	async: false,
+    	type: "PUT",
+	    url: "/incidents/"+hookedIncident.id,
+       data: formValues,
+        dataType: "json",
+        success: function(data, status){
+        	 hookedIncident=data.content;
+        	 google.maps.event.clearListeners(hookedMarker,'click');
+        	 setEventsOnIncident(hookedMarker,latlng,hookedIncident);          	    	
+	    } // end on success
+	}); // end of the new Ajax.Request() call
+}
 /////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 //           MARKER MOD
@@ -973,7 +1018,6 @@ geocoder.geocode({'latLng': latlng}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
            if (results[0]) {
            	  hookedGeosmarker.address = results[0].formatted_address;
-           	  alert(hookedGeosmarker.address);
           	  hookedGeosmarker.name = document.getElementById("hookmarkerpanel").namemarkertxt.value;
               displayMarkerHook(hookedMarker, results[0].formatted_address , hookedGeosmarker);
            } else {

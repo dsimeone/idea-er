@@ -12,8 +12,9 @@
 #  finalizedTime  :datetime
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  address        :string(255)
 #
 
 class Incident < ActiveRecord::Base
-  attr_accessible :description, :finalizedTime, :incidentStatus, :incidentType, :lat, :lng, :title
+  attr_accessible :description, :finalizedTime, :incidentStatus, :incidentType, :lat, :lng, :title, :address
 end

@@ -12,6 +12,7 @@
 #  finalizedTime  :datetime
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  address        :string(255)
 #
 
 require 'spec_helper'
