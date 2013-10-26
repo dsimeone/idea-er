@@ -266,7 +266,7 @@ html {
 }
 
 body {
-  padding-top:  90px;
+  padding-top:  50px;
 }
 
 section {
@@ -307,7 +307,7 @@ h2 {
 }
 
 p {
-  font-size: 1.1em;
+  font-size: 1em;
   line-height: 1.7em;
 }
 
@@ -398,10 +398,11 @@ aside {
 
 input, textarea, select, .uneditable-input {
   border: 1px solid #bbb;
-  width: 100%;
-  padding: 10px;
+  width: 90%;
+  padding: 5px;
   height: auto;
-  margin-bottom: 15px;
+  margin-left: 5px;
+  margin-bottom: 5px;
   @include box_sizing;
 }
 
@@ -465,8 +466,8 @@ aside {
 #map_canvas {
   position: absolute;
   float: left;
-  width: 80%;
-  height: 85%;
+  width: 75%;
+  height: 90%;
   overflow: auto;
   border: 1px solid gray;
   left: 2px;
@@ -474,65 +475,51 @@ aside {
 
 }
 
+
 #sidebar {
   position: absolute;
   float: right;
-  width: 19%;
-  height: 85%;
+  width: 24%;
+  height: 90%;
   overflow: auto;
   border: 1px solid gray;
   background-color: black;
   color: white; 
-  font-family: sans-serif;
-  font-size: 0.9em;
   right: 2px;
-  display: block;
 }
 
+/*   sidebar and infobox */
 
-#sidebar form {
-    position: relative;
-    width: 100%;
-    top: 1px;
-    border: 1px solid red;
-    font-family: sans-serif;
-    font-size: 10px;
-    padding-left: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-
+#hookmarkerpanel {
+  border: 3px solid red;
+  padding: 2px;
+  font-size: 12px;
+}
+#hookincidentpanel {
+  border: 3px solid red;
+  padding: 2px;
+  font-size: 12px;
 }
 
-
-
-#sidebar label {
-  font-size: 1.1em;
-    color: $grayLighter;
-}
-
-#sidebar input {
-  font-size: 1.1em;
-}
-
-#sidebar form label{
+label {
+  margin-left: 5px;
   display: inline;
-  width: 20%;
-  padding-right: 5px;
-  margin-right: 5px;
-  font-family: sans-serif;
-    font-size: 1.1em;
+  font-size: 1em !important;
+  
 }
 
-#sidebar form input[type=text]  {
+.latlngclass {
   display: inline;
-  font-family: sans-serif;
-  font-size: 1em;
-  color: white;
-  width: 40%;
-  right: 5px;
-  border: 1px solid #ccc;
-  background-color: black;
+  font-size: 1em !important;
+  color: white !important;
+  background-color: black !important;
+  border: 1px solid red;
+  width: 25%;
 }
+.button {
+  margin-left: 5px;
+}
+
 
 .idescription {
  font-size: 1em;

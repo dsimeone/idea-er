@@ -27,6 +27,18 @@ class IncidentsController < ApplicationController
 #    render :text=>(Track.find :all).to_json
   end
 
+  # DELETE /incidents/1
+  # DELETE /incidents/1.json
+  def destroy
+      puts("destroy incident--------------------------------------------") 
+    @incident = Incident.find(params[:id])
+      if @incident.destroy
+       res = {:success=>true,:content=>"incident deleted", :notice => "ppppppppppppp"}
+      else
+       res = {:success=>false,:content=>"delete operation failed", :notice => "prrrrrrrrrr"}
+      end
+      render :text=>res.to_json
+  end
 
 
 
@@ -103,15 +115,4 @@ class IncidentsController < ApplicationController
     end
   end
 
-  # DELETE /incidents/1
-  # DELETE /incidents/1.json
-  def destroy
-    @incident = Incident.find(params[:id])
-    @incident.destroy
-
-    respond_to do |format|
-      format.html { redirect_to incidents_url }
-      format.json { head :no_content }
-    end
-  end
 end

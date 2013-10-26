@@ -35,13 +35,15 @@ var hookedOverlay = null;
 var hookedAltOverlay = null;
 var hookedMarker;
 var hookedGeosmarker;
+var hookedIncident;
 var hookMarker; 
 var hookImage;
 var hookAltImage;
 var hookMarkerForm = document.createElement("form");
+var hookIncidentForm = document.createElement("form");
 var incidentInfoBoxCreate;
 var image='';
-
+var imagetxt="";
 var trackHookVisibility = false;
 var markerHookVisibility = false;
 var circleHookVisibility = false;
@@ -316,15 +318,13 @@ function displayGeoPanel() {
   	                    document.getElementById("sidebar").removeChild(geoForm);
   	                    return false;};
   geoForm.innerHTML =  
-    '<fieldset style="width:100%;">' +
-    '<label for="geolatid">Lat/Lng  </label>' +'<br>'+  
-    '<input type="text" id="geolatid" name="geo[lat]" maxlength="10"' + 
+    '<fieldset >' +
+    '<input type="text" class="latlngclass" id="geolatid" name="geo[lat]" maxlength="10"' + 
      'value="'+ centerLatitude.toFixed(4) + '"/>' +
-    '<input type="text" id="geolngid" name="geo[lng]" maxlength="10" ' + 
+    '<input type="text" class="latlngclass" id="geolngid" name="geo[lng]" maxlength="10" ' + 
      'value="'+ centerLongitude.toFixed(4) + '"/>' +
     '<br>' +
-    '<input type="button" id="newincidentbuttonid" value="Insert New Incident" class="button red bigrounded;" onclick="newIncidentOnOff()"/>' +
-    '<br><br>' +
+    '<input type="button" id="newincidentbuttonid" value="Insert New Incident" class="button red medium" onclick="newIncidentOnOff()"/>' +
     '<input type="button" id="althookbuttonid" value="Alt Hook" class="button black medium" onclick="altHookOnOff()"/>' +
     '</fieldset>';
     document.getElementById("sidebar").appendChild(geoForm);
@@ -492,17 +492,30 @@ function createIncidentMarker(incident) {
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 function buildImage(incident) {
-    if (incident.incidentType == 'fire') {image = new google.maps.MarkerImage("/assets/fire.png",null,null, new google.maps.Point(17,17));}
-    if (incident.incidentType == 'flooding') { image = new google.maps.MarkerImage("/assets/flooding.png",null,null, new google.maps.Point(17,17));}
-    if (incident.incidentType == 'roadcrash') { image = new google.maps.MarkerImage("/assets/roadcrash.png",null,null, new google.maps.Point(17,17))}
-    if (incident.incidentType == 'other') { image =  new google.maps.MarkerImage("/assets/other.png",null,null, new google.maps.Point(17,17));}
+	imagetxt="";
+    if (incident.incidentType == 'fire')    	 {
+    	   image = new google.maps.MarkerImage("/assets/fire.png",null,null, new google.maps.Point(17,17));
+           imagetxt = "/assets/fire.png";
+    }
+    if (incident.incidentType == 'flooding') {
+    	   image = new google.maps.MarkerImage("/assets/flooding.png",null,null, new google.maps.Point(17,17));
+           imagetxt = "/assets/flooding.png";
+    }
+    if (incident.incidentType == 'roadcrash') { 
+    	   image = new google.maps.MarkerImage("/assets/roadcrash.png",null,null, new google.maps.Point(17,17));
+           imagetxt = "/assets/roadcrash.png";
+    }
+    if (incident.incidentType == 'other') { 
+    	image =  new google.maps.MarkerImage("/assets/other.png",null,null, new google.maps.Point(17,17));
+           imagetxt = "/assets/other.png";
+    }
 
 }
 ///////////////////////////////////////////////////////////////////////
 function setEventsOnIncident(marker,latlng,incident) {
 
   google.maps.event.addListener(marker,'click',function(){
-   displayIncidentHook(marker,incident,latlng);
+   displayIncidentHook(marker,"",incident);
   });
 
  google.maps.event.addListener(marker,'dragstart',function(){
@@ -536,6 +549,120 @@ function listIncidents() {
   }); //end of .ajax request
 
 }
+/////////////////////////////////////////////
+//click on incident
+/////////////////////////////////////////////
+function displayIncidentHook(marker,address,incident)
+{
+
+	if (altHookFlag== false) {
+		displayIncidentNormalHook(marker,address,incident);
+	}
+	else{
+		displayIncidentAltHook(marker, address,incident);
+	}
+}
+////////////////////////////////////////////////////////////////////////////
+function displayIncidentNormalHook(marker, address,incident)
+{
+//   directionsDisplay.setPanel(document.getElementById(null));
+   if (hookedOverlay != null) {	
+   	hookedOverlay.setOptions({strokeColor: '#000000'});
+   	hookedOverlay.setMap(map);
+   } 	
+   if (hookedAltOverlay != null) {	
+   	hookedAltOverlay.setOptions({strokeColor: '#F0F000'});
+   	hookedAltOverlay.setMap(map);
+   }
+   hookedOverlay = null; 	
+   hookedGeosmarker = null;
+   hookedMarker = marker;
+   hookedIncident = incident;
+   var incidentrname;
+   var incidentaddress;
+   if (incident == null) {
+   	incidentname="";
+   	incidentaddress="";
+   }
+   else {
+   	incidenttitle=incident.title;
+   	incidentaddress=incident.address;
+
+   }
+   hookMarker.setPosition(marker.getPosition());
+   hookMarker.setMap(map);
+  //Hook HTML DOM form element
+  hookIncidentForm.id = "hookincidentpanel";
+  hookIncidentForm.setAttribute("action","");
+ hookIncidentForm.onsubmit = function() {
+  	                    deleteIncident(incident,marker); 
+  	                    hookMarker.setMap(null); 
+  	                    document.getElementById("sidebar").removeChild(hookIncidentForm);
+  	                    marker.setMap(null);
+  	                    incidentHookVisibility = false;
+  	                    return false;};
+  buildImage(incident);
+  hookIncidentForm.innerHTML =  
+    '<fieldset>' +
+    ' <img src="'+imagetxt + '"' + ' height="28" width="28"> ' +
+    '<label >Lat/Lng: </label>'  +
+    '<input type="text" class="latlngclass"  name="incident[lat]" value="' +
+     marker.getPosition().lat().toFixed(4) + '"/>'  +
+    '<input type="text" class="latlngclass"  name="incident[lng]" value="' +
+     marker.getPosition().lng().toFixed(4) + '"/>' +
+    '<br>' +
+    '<label >Title   </label>'  +
+    '<input type="text" id="titleincidenttxt"  name="incident[title]" value="' + incidenttitle + '"/>' +
+    '<br>' +
+    '<label >Address </label>' +   
+    '<input type="text"  name="incident[address]" ' +
+    'value="'+  incidentaddress + '"/>'+   
+    '<input type="button" class="button black"  value="Find Address" onclick="displayReverseGeocodeOnIncidentHook();" />' +
+    '<input type="button" class="button black"  value="     Center     " onclick="centerMapOnIncidentHook();" />' +
+    '<input type="button" class="button black" value="     Update     " onclick="saveIncidentOnDB();" />' +
+    '<input type="submit" class="button red" value="     Delete     " />' +
+   '</fieldset>';
+
+    if (markerHookVisibility == true){
+    	document.getElementById("sidebar").removeChild(hookMarkerForm);
+    	markerHookVisibility = false;
+    }
+    if (trackHookVisibility == true){
+    	document.getElementById("sidebar").removeChild(hookForm);
+    	trackHookVisibility = false;
+    }
+    if (circleHookVisibility == true){
+    	document.getElementById("sidebar").removeChild(hookCircleForm);
+    	circleHookVisibility = false;
+    }
+    if (rectangleHookVisibility == true){
+    	document.getElementById("sidebar").removeChild(hookRectangleForm);
+    	rectangleHookVisibility = false;
+    }    
+    if (polylineHookVisibility == true){
+    	document.getElementById("sidebar").removeChild(hookPolylineForm);
+    	polylineHookVisibility = false;
+    }
+    if (polygonHookVisibility == true){
+    	document.getElementById("sidebar").removeChild(hookPolygonForm);
+    	polygonHookVisibility = false;
+    }    
+    document.getElementById("sidebar").appendChild(hookIncidentForm);
+    incidentHookVisibility = true;
+}
+////////////////////////////////////////////////////////////
+function deleteIncident(incident,marker) {
+    $.ajax({
+    	async: false,
+    	type: "DELETE",
+    	url: "/incidents/"+incident.id,
+    	success: function(data,status){
+
+    	}
+    })
+}
+
+
 /////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 //           MARKER MOD
@@ -556,7 +683,7 @@ function displayMarkerHook(marker,address,geosmarker)
 function displayMarkerNormalHook(marker, address,geosmarker)
 {
 //   directionsDisplay.setPanel(document.getElementById(null));
-   if (hookedOverlay != null) {	
+   if (hookedOverlay != null) {	 
    	hookedOverlay.setOptions({strokeColor: '#000000'});
    	hookedOverlay.setMap(map);
    } 	
@@ -565,6 +692,7 @@ function displayMarkerNormalHook(marker, address,geosmarker)
    	hookedAltOverlay.setMap(map);
    }
    hookedOverlay = null; 	
+   hookedIncident = null;
    hookedMarker = marker;
    hookedGeosmarker = geosmarker;
    var geosmarkername;
@@ -594,13 +722,12 @@ function displayMarkerNormalHook(marker, address,geosmarker)
   	                    markerHookVisibility = false;
   	                    return false;};
   hookMarkerForm.innerHTML =  
-    '<fieldset style="width:100%;">' +
+    '<fieldset>' +
     ' <img src="/assets/map-pin-red.png"  height="34" width="28"> ' +
-    '<label for="latitude">Lat/Lng: </label>' + marker.getPosition().lat().toFixed(4) +
-    '<input type="hidden" id="markerlatid" name="geosmarker[lat]" value="' +
-     marker.getPosition().lat().toFixed(4) + '"/>' +  ' /  ' +
-      marker.getPosition().lng().toFixed(4) +
-    '<input type="hidden" id="markerlngid" name="geosmarker[lng]" value="' +
+    '<label for="latitude">Lat/Lng: </label>'  +
+    '<input type="text" class="latlngclass" id="markerlatid" name="geosmarker[lat]" value="' +
+     marker.getPosition().lat().toFixed(4) + '"/>'  +
+    '<input type="text" class="latlngclass" id="markerlngid" name="geosmarker[lng]" value="' +
      marker.getPosition().lng().toFixed(4) + '"/>' +
     '<br>' +
     '<label for="namemarkertxt">Name   </label>'  +
@@ -620,6 +747,10 @@ function displayMarkerNormalHook(marker, address,geosmarker)
     if (trackHookVisibility == true){
     	document.getElementById("sidebar").removeChild(hookForm);
     	trackHookVisibility = false;
+    }
+    if (incidentHookVisibility == true){
+    	document.getElementById("sidebar").removeChild(hookIncidentForm);
+    	incidentHookVisibility = false;
     }
     if (circleHookVisibility == true){
     	document.getElementById("sidebar").removeChild(hookCircleForm);
@@ -842,8 +973,9 @@ geocoder.geocode({'latLng': latlng}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
            if (results[0]) {
            	  hookedGeosmarker.address = results[0].formatted_address;
-           	  hookedGeosmarker.name = document.getElementById("hookmarkerpanel").namemarkertxt.value;
-              displayMarkerHook(hookedMarker, results[0].formatted,address,hookedGeosmarker);
+           	  alert(hookedGeosmarker.address);
+          	  hookedGeosmarker.name = document.getElementById("hookmarkerpanel").namemarkertxt.value;
+              displayMarkerHook(hookedMarker, results[0].formatted_address , hookedGeosmarker);
            } else {
                alert("No results found");
              }
